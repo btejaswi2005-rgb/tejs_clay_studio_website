@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- ============================================================
+         HEAD SECTION
+         - Page metadata, viewport settings, and title
+         - All CSS styles are defined here within <style> tags
+    ============================================================ -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tej's Clay Studio</title>
+    <style>
+
+        /* ── CSS VARIABLES (Global Color Palette) ─────────────────
+           Define reusable color tokens used across the entire site
+        ──────────────────────────────────────────────────────────── */
+        :root {
+            --dark-green: #2d4f45;
+            --cream: #f4f1e6;
+            --gold: #c5a47e;
+            --white: #ffffff;
+            --offer-bg: #7b2c2c;
+            --whatsapp-green: #25D366;
+            --insta-pink: #E1306C;
+        }
+
+        /* ── ANIMATIONS ───────────────────────────────────────────
+           Keyframe for fade-in + upward slide effect
+           Used via the .animate-in class
+        ──────────────────────────────────────────────────────────── */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in { animation: fadeInUp 0.8s ease forwards; }
+
+        /* ── BODY / BASE STYLES ───────────────────────────────────
+           Full-page dark green overlay on top of bg.jpg
+           Serif font, centered text, no horizontal overflow
+        ──────────────────────────────────────────────────────────── */
+        body {
+            font-family: 'Georgia', serif;
+            margin: 0;
+            background: linear-gradient(rgba(45, 79, 69, 0.9), rgba(45, 79, 69, 0.9)), url('bg.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            color: var(--white);
+            text-align: center;
+            overflow-x: hidden;
+        }
+
+        /* ── TOP OFFER BANNER ─────────────────────────────────────
+           Full-width promotional strip at the very top of the page
+        ──────────────────────────────────────────────────────────── */
+        .offer-bar { 
+            background-color: var(--offer-bg); color: white; padding: 12px; 
+            font-size: 0.85rem; font-weight: bold; letter-spacing: 1px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        /* ── NAVIGATION BAR ───────────────────────────────────────
+           Sticky frosted-glass nav with gold-colored links
+        ──────────────────────────────────────────────────────────── */
+        nav {
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(15px);
+            padding: 15px; position: sticky; top: 0; z-index: 100;
+            border-bottom: 1px solid rgba(197, 164, 126, 0.3);
+            display: flex; justify-content: center; flex-wrap: wrap;
+        }
+        nav a { 
+            color: var(--gold); text-decoration: none; margin: 5px 15px; 
+            font-weight: bold; text-transform: uppercase; cursor: pointer; 
+            transition: 0.3s; font-size: 0.8rem;
+        }
+        nav a:hover { color: var(--cream); transform: translateY(-2px); }
+
+        /* ── PAGE SECTIONS ────────────────────────────────────────
+           All <section> pages are hidden by default
+           Only #home is set to display:block on load (via HTML)
+        ──────────────────────────────────────────────────────────── */
+        .page { display: none; padding: 50px 20px; min-height: 80vh; box-sizing: border-box; }
+        #home { display: block; }
+
+        /* ── CONTENT BOX ──────────────────────────────────────────
+           Frosted glass card used on About & Contact pages
+        ──────────────────────────────────────────────────────────── */
+        .content-box {
+            max-width: 700px; margin: 0 auto; background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px); padding: 40px; border-radius: 25px;
+            border: 1px solid rgba(197, 164, 126, 0.2); line-height: 1.8;
+        }
+
+        /* ── FEEDBACK / REVIEW CARDS ──────────────────────────────
+           Grid layout for customer review cards on Feedback page
+        ──────────────────────────────────────────────────────────── */
+        .feedback-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 30px; }
+        .review-card {
+            background: rgba(244, 241, 230, 0.05); border: 1px solid rgba(197, 164, 126, 0.3);
+            padding: 25px; border-radius: 15px; width: 280px; text-align: left;
+        }
+
+        /* ── GENERIC FLEX GRID ────────────────────────────────────
+           Reusable centered wrapping flex grid (used in multiple sections)
+        ──────────────────────────────────────────────────────────── */
+        .grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 30px; }
+
+        /* ── CATEGORY BOXES (Collections Page) ───────────────────
+           Large clickable tiles for selecting a product category
+        ──────────────────────────────────────────────────────────── */
+        .category-box {
+            background: rgba(244, 241, 230, 0.95); color: var(--dark-green);
+            padding: 50px 20px; border-radius: 20px; cursor: pointer;
+            font-size: 1.3rem; font-weight: bold; transition: 0.4s;
+            border: 1px solid var(--gold); min-width: 200px;
+        }
+        .category-box:hover { transform: scale(1.03); background: var(--gold); color: white; }
+
+        /* ── PRODUCT CARDS ────────────────────────────────────────
+           Individual product cards shown in the Products grid
+           Includes image, name, description, price, and order button
+        ──────────────────────────────────────────────────────────── */
+        .card {
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(8px);
+            border: 1px solid rgba(197, 164, 126, 0.4); padding: 20px;
+            border-radius: 20px; width: 280px; display: flex;
+            flex-direction: column; justify-content: space-between; transition: 0.3s;
+        }
+        .card img { width: 100%; height: 300px; object-fit: cover; border-radius: 15px; margin-bottom: 15px; }
+        .product-desc { font-size: 0.85rem; font-style: italic; color: #ddd; margin-bottom: 10px; }
+
+        /* ── REUSABLE BUTTON ──────────────────────────────────────
+           Gold pill-shaped button used across all pages
+        ──────────────────────────────────────────────────────────── */
+        .btn { 
+            background: var(--gold); color: var(--dark-green); padding: 14px 30px; 
+            border: none; border-radius: 30px; font-weight: bold; 
+            cursor: pointer; transition: 0.3s; text-decoration: none; display: inline-block;
+        }
+
+        /* ── ORDER MODAL ──────────────────────────────────────────
+           Full-screen overlay modal to choose WhatsApp or Instagram
+           Hidden by default; toggled via prepareOrder() / closeModal()
+        ──────────────────────────────────────────────────────────── */
+        #orderModal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background: var(--dark-green); padding: 40px; border-radius: 25px;
+            border: 2px solid var(--gold); max-width: 400px; width: 90%;
+        }
+        .order-choice-btn {
+            display: block; width: 100%; padding: 15px; margin: 10px 0;
+            border-radius: 10px; text-decoration: none; color: white; font-weight: bold;
+        }
+        .wa-btn { background-color: var(--whatsapp-green); }   /* WhatsApp button */
+        .ig-btn { background-color: var(--insta-pink); }       /* Instagram button */
+
+        /* ── FOOTER ───────────────────────────────────────────────
+           Simple copyright footer at the bottom of the page
+        ──────────────────────────────────────────────────────────── */
+        footer { padding: 40px; opacity: 0.6; font-size: 0.8rem; border-top: 1px solid rgba(255,255,255,0.1); }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================
+         TOP OFFER BANNER
+         Promotional strip displayed at the very top of every page
+    ============================================================ -->
+    <div class="offer-bar">✨ LAUNCH SPECIAL: BUY 2 GET 1 FREE | FREE SHIPPING UP TO 30KM ✨</div>
+
+
+    <!-- ============================================================
+         NAVIGATION BAR
+         Sticky nav with links to each page section
+         Uses showPage() JS function to switch between sections
+    ============================================================ -->
+    <nav>
+        <a onclick="showPage('home')">Home</a>
+        <a onclick="showPage('categories')">Collections</a>
+        <a onclick="showPage('about')">The Artist</a>
+        <a onclick="showPage('contact')">Contact</a>
+        <a onclick="showPage('feedback')">Feedback</a>
+    </nav>
+
+
+    <!-- ============================================================
+         ORDER MODAL (Overlay)
+         Appears when user clicks "Order Now" on any product
+         Offers choice between WhatsApp and Instagram DM
+         - wa-link: dynamically set with product name + price
+         - order-item-name: displays selected item in modal
+    ============================================================ -->
+    <div id="orderModal">
+        <div class="modal-content animate-in">
+            <h2 id="modal-title" style="color: var(--gold);">Where to Chat?</h2>
+            <p id="order-item-name" style="font-style: italic; color: var(--cream);"></p>
+            <p style="font-size: 0.8rem; color: var(--gold);">Details copied to clipboard! Just paste in the DM.</p>
+            <a id="wa-link" href="#" target="_blank" class="order-choice-btn wa-btn">WhatsApp</a>
+            <a href="https://ig.me/m/tejs_clay_studio" target="_blank" class="order-choice-btn ig-btn">Instagram DM</a>
+            <button onclick="closeModal()" style="background:none; border:none; color:var(--cream); cursor:pointer; margin-top:15px; text-decoration:underline;">Cancel</button>
+        </div>
+    </div>
+
+
+    <!-- ============================================================
+         PAGE: HOME (#home)
+         Landing page with logo, tagline, and CTA buttons
+         - "Enter Studio" → goes to Collections page
+         - "Customise Something" → opens order modal for custom commission
+    ============================================================ -->
+    <section id="home" class="page animate-in">
+        <header>
+            <img src="logo.png" alt="Logo" class="logo-img" style="max-width: 140px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4)); margin-bottom: 15px;">
+            <h1 style="font-size: 3.5rem; color: var(--cream); margin: 0;">Tej's Clay Studio</h1>
+            <p>Adorable Clay Charms Made with Love.</br>Small Charms, Sweet Stories.</p>
+        </header>
+        <button class="btn" onclick="showPage('categories')">Enter Studio</button>
+        <div style="margin-top: 20px;">
+            <button class="btn" style="background: var(--white);" onclick="prepareOrder('Custom Commission', 'N/A')">🎨 Customise Something</button>
+        </div>
+    </section>
+
+
+    <!-- ============================================================
+         PAGE: ABOUT (#about)
+         "Behind the Clay" — artist intro / story section
+    ============================================================ -->
+    <section id="about" class="page">
+        <h1 style="color: var(--cream);">Behind the Clay</h1>
+        <div class="content-box animate-in">
+            <p>Hi, I'm <b>Tej</b>!</p>
+            <p>I am a student driven by a love for art. What began as a personal hobby has evolved into <b>Tej's Clay Studio</b>, where I transform raw clay into miniature wonders.</p>
+            <p>Every piece is uniquely handmade with precision and passion. By choosing my work, you're supporting a student's dream and getting a one-of-a-kind treasure.</p>
+            <br>
+            <button class="btn" onclick="showPage('categories')">Explore My Work</button>
+        </div>
+    </section>
+
+
+    <!-- ============================================================
+         PAGE: CONTACT (#contact)
+         Address, email, Instagram handle, and chat button
+    ============================================================ -->
+    <section id="contact" class="page">
+        <h1 style="color: var(--cream);">Get In Touch</h1>
+        <div class="content-box animate-in">
+            <p>📍 <b>Address:</b> Chittinagar, Vijayawada, Andhra Pradesh</p>
+            <p>📧 <b>Gmail:</b> tejsclaystudio@gmail.com</p>
+            <p>📷 <b>Instagram:</b> @tejs_clay_studio</p>
+            <br>
+            <button onclick="prepareOrder('General Inquiry', '')" class="btn">Chat with Me</button>
+        </div>
+    </section>
+
+
+    <!-- ============================================================
+         PAGE: FEEDBACK (#feedback)
+         Customer reviews displayed as star-rated cards
+    ============================================================ -->
+    <section id="feedback" class="page">
+        <h1 style="color: var(--cream);">Customer Love</h1>
+        <div class="feedback-grid animate-in">
+
+            <!-- Review 1 -->
+            <div class="review-card">
+                <div style="color: #ffcc00; margin-bottom: 10px;">★★★★★</div>
+                <p style="font-style: italic; font-size: 0.9rem;">"The attention to detail on the Reindeer keychain is amazing!"</p>
+                <p style="color: var(--gold); font-size: 0.8rem; font-weight: bold;">— Kusuma B.</p>
+            </div>
+
+            <!-- Review 2 -->
+            <div class="review-card">
+                <div style="color: #ffcc00; margin-bottom: 10px;">★★★★★</div>
+                <p style="font-style: italic; font-size: 0.9rem;">"These charms are absolutely adorable! The details are just perfect 😍"</p>
+                <p style="color: var(--gold); font-size: 0.8rem; font-weight: bold;">— Bharathi.</p>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- ============================================================
+         PAGE: CATEGORIES (#categories)
+         Collection selection page — click a tile to filter products
+         NOTE: "Mobile Charms" category is commented out (not live yet)
+    ============================================================ -->
+    <section id="categories" class="page">
+        <h1 style="color: var(--cream);">Our Collections</h1>
+        <div class="grid animate-in">
+            <div class="category-box" onclick="showCategory('keychain')">Keychains</div>
+            <div class="category-box" onclick="showCategory('magnet')">Fridge Magnets</div>
+	    <div class="category-box" onclick="showCategory('letter customisation')">Letter Customisation</div>
+       <!--     <div class="category-box" onclick="showCategory('mobile')">Mobile Charms</div> -->
+            <!-- New category tiles added -->
+            <div class="category-box" onclick="showCategory('gift')">Gifts</div>
+            <div class="category-box" onclick="showCategory('bag pin')">Bag Pins</div>
+            <div class="category-box" onclick="showCategory('book marks')">Book Marks</div>
+        </div>
+    </section>
+
+
+    <!-- ============================================================
+         PAGE: PRODUCTS (#products)
+         Dynamically filtered product listing page
+         - Title and visible cards update based on selected category
+         - Each card has: image, name, description, price, Order Now btn
+         - data-cat attribute used by showCategory() to filter cards
+    ============================================================ -->
+    <section id="products" class="page">
+        <!-- Back link to Categories page -->
+        <a onclick="showPage('categories')" style="color: var(--gold); cursor: pointer; font-weight: bold;">← Back</a>
+
+        <!-- Dynamic page title (set by showCategory()) -->
+        <h1 id="product-title" style="color: var(--cream); margin: 30px 0;"></h1>
+
+        <div class="grid animate-in" id="product-grid">
+
+            <!-- ── KEYCHAINS ──────────────────────────────────── -->
+
+            <!-- Product: BowBear Keychain -->
+	     <div class="card" data-cat="keychain">
+                <img src="bowbear.jpg" alt="BowBear">
+                <div>
+                    <h3>BowBear Keychain</h3>
+                    <p class="product-desc">Bowbear — a little handmade charm that brings big smiles wherever it goes 🧸✨
+</p>
+                    <p style="color: var(--gold); font-weight: bold;">₹120</p>
+                </div>
+                <button class="btn" onclick="prepareOrder('BowBear Keychain', '₹120')">Order Now</button>
+            </div>
+
+            <!-- Product: Dhoni Jersey Keychain -->
+	    <div class="card" data-cat="keychain">
+                <img src="dhoni_jersey.jpg" alt="Dhoni">
+                <div>
+                    <h3>DHONI JERSEY Keychain</h3>
+                    <p class="product-desc">Number 7 isn't a number, timeless inspiration💙 - Thala for a Reason</p>
+                    <p style="color: var(--gold); font-weight: bold;">₹100</p>
+                </div>
+                <button class="btn" onclick="prepareOrder('Dhoni Jersey Keychain', '₹100')">Order Now</button>
+            </div>
+
+            <!-- Product: Rohit Jersey Keychain -->
+	   <div class="card" data-cat="keychain">
+                <img src="rohit_jersey.jpg" alt="Rohit Sharma">
+                <div>
+                    <h3>Rohit Jersey Keychain</h3>
+                    <p class="product-desc">Number 45 isn't just a number, it's pure class and fearless leadership — Hitman for every season. 💙
+</p>
+                    <p style="color: var(--gold); font-weight: bold;">₹100</p>
+                </div>
+                <button class="btn" onclick="prepareOrder('Rohit Jersey Keychain', '₹100')">Order Now</button>
+            </div>
+
+            <!-- Product: K L Rahul Jersey Keychain -->
+	    <div class="card" data-cat="keychain">
+                <img src="rahul_jersey.jpg" alt="K L Rahul">
+                <div>
+                    <h3>K L Rahul Jersey Keychain</h3>
+                    <p class="product-desc">Not every player wears 1, but KL Rahul makes 1 unforgettable. 💙
+</p>
+                    <p style="color: var(--gold); font-weight: bold;">₹100</p>
+                </div>
+                <button class="btn" onclick="prepareOrder('K L Rahul Jersey Keychain', '₹100')">Order Now</button>
+            </div>
+
+            <!-- Product: Whisky Keychain -->
+	    <div class="card" data-cat="keychain">
+                <img src="whisky.jpg" alt="Whisky">
+                <div>
+                    <h3>Whisky Keychain</h3>
+                    <p class="product-desc">A classy miniature whisky charm with bold, stylish vibes.
+</p>
+                    <p style="color: var(--gold); font-weight: bold;">₹120</p>
+                </div>
+                <button class="btn" onclick="prepareOrder('Whisky Keychain', '₹120')">Order Now</button>
+            </div>
+
+            <!-- Product: Shinchan Keychain -->
+	    <div class="card" data-cat="keychain">
+                <img src="shinchan.jpg" alt="Shinchan">
+                <div>
+                    <h3>Shinchan Keychain</h3>
+                    <p class="product-desc">A playful and adorable Shinchan keychain that brings naughty charm and childhood nostalgia wherever you go.
+</p>
+                    <p style="color: var(--gold); font-weight: bold;">₹150</p>
+                </div>
+                <button class="btn" onclick="prepareOrder('Shinchan Keychain', '₹150')">Order Now</button>
+            </div>
+
+            <!-- Product: Reindeer Keychain -->
+            <div class="card" data-cat="keychain">
+                <img src="reindeer.jpg" alt="Reindeer">
+                <div>
+                    <h3>Reindeer Keychain</h3>
+                    <p class="product-desc">A festive and cute reindeer companion for your keys.</p>
+                    <p style="color: var(--gold); font-weight: bold;">₹120</p>
+                </div>
+                <button class="btn" onclick="prepareOrder('Reindeer Keychain', '₹120')">Order Now</button>
+            </div>
+
+            <!-- Product: Lilybun Keychain -->
+            <div class="card" data-cat="keychain">
+                <img src="lilybun.jpg" alt="Lilybun">
+                <div>
+                    <h3>Lilybun Keychain</h3>
+                    <p class="product-desc">A soft, floral-themed bunny sculpted with care.</p>
+                    <p style="color: var(--gold); font-weight: bold;">₹110</p>
+                </div>
+                <button class="btn" onclick="prepareOrder('Lilybun Keychain', '₹110')">Order Now</button>
+            </div>
+
+            <!-- Product: Virat Jersey Keychain -->
+	 <div class="card" data-cat="keychain">
+                <img src="virat_jersy.jpg" alt="Lilybun">
+                <div>
+                    <h3>VIRAT JERSY Keychain</h3>
+                    <p class="product-desc">A tiny jersey for a giant legacy— VIRAT 18 💙🏏</p>
+                    <p style="color: var(--gold); font-weight: bold;">₹100</p>
+                </div>
+                <button class="btn" onclick="prepareOrder('VIRAT JERSY Keychain', '₹100')">Order Now</button>
+            </div>
+
+            <!-- Product: Ruby Keychain -->
+            <div class="card" data-cat="keychain">
+                <img src="ruby.jpg" alt="Ruby">
+                <div>
+                    <h3>Ruby Keychain</h3>
+                    <p class="product-desc">A vibrant, gem-inspired charm to brighten your day.</p>
+                    <p style="color: var(--gold); font-weight: bold;">₹110</p>
+                </div>
+                <button class="btn" onclick="prepareOrder('Ruby Keychain', '₹110')">Order Now</button>
+            </div>
+
+            <!-- ── FRIDGE MAGNETS ──────────────────────────────── -->
+
+            <!-- Product: Blueboo Magnet -->
+            <div class="card" data-cat="magnet">
+                <img src="blueboo.jpg" alt="Toast">
+                <div>
+                    <h3>Blueboo Magnet</h3>
+                    <p class="product-desc">Blueboo is hero to brighten your fridge.</p>
+                    <p style="color: var(--gold); font-weight: bold;">₹60</p>
+                </div>
+                <button class="btn" onclick="prepareOrder('Blueboo Magnet', '₹60')">Order Now</button>
+            </div>
+
+            <!-- ── GIFTS ──────────────────────────────────────── -->
+
+            <!-- Product: Teddy Couple Gift -->
+            <div class="card" data-cat="gift">
+                <img src="teddy_couple.jpg" alt="Teddy Couple Gift">
+                <div>
+                    <h3>Teddy Couple Gift</h3>
+                    <p class="product-desc">A sweet handmade teddy couple charm — the perfect gift for someone special 🧸💕</p>
+                    <p style="color: var(--gold); font-weight: bold;">₹550</p>
+                </div>
+                <button class="btn" onclick="prepareOrder('Teddy Couple Gift', '₹550')">Order Now</button>
+            </div>
+
+            <!-- Product: Cute Ganesha -->
+            <div class="card" data-cat="gift">
+                <img src="lord_ganesha.jpg" alt="Cute Ganesha">
+                <div>
+                    <h3>Cute Ganesha</h3>
+                    <p class="product-desc">A charming miniature Ganesha sculpted with love and devotion — bless every space. 🙏✨</p>
+                    <p style="color: var(--gold); font-weight: bold;">₹250</p>
+                </div>
+                <button class="btn" onclick="prepareOrder('Cute Ganesha', '₹250')">Order Now</button>
+            </div>
+
+            <!-- Product: Letter Theme Photo Stand -->
+            <div class="card" data-cat="gift">
+                <img src="letter_photo_stand.jpg" alt="Letter Theme Photo Stand">
+                <div>
+                    <h3>Letter Theme Photo Stand</h3>
+                    <p class="product-desc">A personalized letter-themed photo stand — a thoughtful keepsake for your favourite memories. 📸</p>
+                    <p style="color: var(--gold); font-weight: bold;">₹150</p>
+                </div>
+                <button class="btn" onclick="prepareOrder('Letter Theme Photo Stand', '₹150')">Order Now</button>
+            </div>
+
+            <!-- Product: Cookie Theme Photo Stand -->
+            <div class="card" data-cat="gift">
+                <img src="cookie_photo_stand.jpg" alt="Cookie Theme Photo Stand">
+                <div>
+                    <h3>Cookie Theme Photo Stand</h3>
+                    <p class="product-desc">A cute cookie-themed photo stand to display your sweetest memories in style. 🍪</p>
+                    <p style="color: var(--gold); font-weight: bold;">₹150</p>
+                </div>
+                <button class="btn" onclick="prepareOrder('Cookie Theme Photo Stand', '₹150')">Order Now</button>
+            </div>
+
+            <!-- ── BAG PINS ────────────────────────────────────── -->
+
+            <!-- Product: Heart Smiley Bag Pin -->
+            <div class="card" data-cat="bag pin">
+                <img src="red_heart_Smiley.jpg" alt="Heart Smiley Bag Pin">
+                <div>
+                    <h3>Heart Smiley Bag Pin</h3>
+                    <p class="product-desc">A cheerful heart smiley pin to add a pop of cuteness to your bag. 😊❤️</p>
+                    <p style="color: var(--gold); font-weight: bold;">₹50</p>
+                </div>
+                <button class="btn" onclick="prepareOrder('Heart Smiley Bag Pin', '₹50')">Order Now</button>
+            </div>
+
+            <!-- Product: Evil Eye Bag Pin -->
+            <div class="card" data-cat="bag pin">
+                <img src="evil_eye_bag_pin.jpg" alt="Evil Eye Bag Pin">
+                <div>
+                    <h3>Evil Eye Bag Pin</h3>
+                    <p class="product-desc">A stylish evil eye pin to ward off bad vibes and elevate your look. 🧿</p>
+                    <p style="color: var(--gold); font-weight: bold;">₹50</p>
+                </div>
+                <button class="btn" onclick="prepareOrder('Evil Eye Bag Pin', '₹50')">Order Now</button>
+            </div>
+
+            <!-- ── BOOK MARKS ──────────────────────────────────── -->
+
+            <!-- Product: Book Mark -->
+            <div class="card" data-cat="book marks">
+                <img src="book_mark_01.jpg" alt="Book Mark">
+                <div>
+                    <h3>Book Mark</h3>
+                    <p class="product-desc">A handcrafted clay bookmark to make every reading session a little more special. 📖✨</p>
+                    <p style="color: var(--gold); font-weight: bold;">₹110</p>
+                </div>
+                <button class="btn" onclick="prepareOrder('Book Mark', '₹110')">Order Now</button>
+            </div>
+
+            <!-- ── FRIDGE MAGNETS ──────────────────────────────── -->
+
+            <!-- Product: Heart Magnet -->
+            <div class="card" data-cat="magnet">
+                <img src="heart_fridge_magnet.jpg" alt="Heart Magnet">
+                <div>
+                    <h3>Heart Magnet</h3>
+                    <p class="product-desc">A sweet little heart magnet to add a touch of love to your fridge. ❤️</p>
+                    <p style="color: var(--gold); font-weight: bold;">₹60</p>
+                </div>
+                <button class="btn" onclick="prepareOrder('Heart Magnet', '₹60')">Order Now</button>
+            </div>
+
+            <!-- ── LETTER CUSTOMISATION ───────────────────────── -->
+
+            <!-- Product: P Letter Charm -->
+		<div class="card" data-cat="letter customisation">
+                <img src="pletter.jpg" alt="P Letter Customisation">
+                <div>
+                    <h3>P Letter Charm</h3>
+                    <p class="product-desc">A tiny, elegant "P" charm to add a personal and stylish touch to your mobile or bag.</p>
+                    <p style="color: var(--gold); font-weight: bold;">₹100</p>
+                </div>
+                <button class="btn" onclick="prepareOrder('P Letter Charm', '₹100')">Order Now</button>
+            </div>
+
+        </div>
+
+        <!-- ── COMMENTED OUT: MOBILE CHARMS (Not live yet) ──────
+             Uncomment when the Mobile Charms category goes live
+        ─────────────────────────────────────────────────────────── -->
+         <!--   <div class="card" data-cat="mobile">
+                <img src="strawberry_charm.jpg" alt="Strawberry">
+                <div>
+                    <h3>Strawberry Charm</h3>
+                    <p class="product-desc">A tiny, sweet strawberry for your mobile or bag.</p>
+                    <p style="color: var(--gold); font-weight: bold;">₹90</p>
+                </div>
+                <button class="btn" onclick="prepareOrder('Strawberry Charm', '₹90')">Order Now</button>
+            </div>
+
+        </div>-->
+    </section>
+
+
+    <!-- ============================================================
+         FOOTER
+         Copyright notice at the bottom of the page
+    ============================================================ -->
+    <footer>&copy; 2026 Tej's Clay Studio</footer>
+
+
+    <!-- ============================================================
+         JAVASCRIPT
+         All site interactivity is handled here:
+         - showPage()      → switch between named page sections
+         - showCategory()  → filter products by data-cat attribute
+         - prepareOrder()  → build order message, set modal links
+         - closeModal()    → hide the order modal overlay
+    ============================================================ -->
+    <script>
+        const myWhatsAppNumber = "916309434059"; // Update with your actual number
+
+        /* showPage(pageId)
+           Hides all .page sections, then shows the one matching pageId
+           Also scrolls back to top of the window */
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+            document.getElementById(pageId).style.display = 'block';
+            window.scrollTo(0,0);
+        }
+
+        /* showCategory(category)
+           Navigates to the Products page, updates the title,
+           and shows only cards whose data-cat matches the given category */
+        function showCategory(category) {
+            showPage('products');
+            document.getElementById('product-title').innerText = category.toUpperCase() + "S";
+            document.querySelectorAll('.card').forEach(item => {
+                item.style.display = item.getAttribute('data-cat') === category ? 'flex' : 'none';
+            });
+        }
+
+        /* prepareOrder(name, price)
+           Builds an order message string, copies it to clipboard,
+           sets the WhatsApp deep-link with the message pre-filled,
+           and opens the order modal */
+        function prepareOrder(name, price) {
+            let orderMessage = `Hi Tej! I'd like to order the ${name} (${price}). Is it available?`;
+            
+            if(name === 'Custom Commission') {
+                orderMessage = `Hi Tej! I have an idea for a custom clay creation I'd like to discuss!`;
+            }
+            
+            navigator.clipboard.writeText(orderMessage).then(() => { console.log("Copied"); });
+
+            const waLink = document.getElementById('wa-link');
+            waLink.href = `https://wa.me/${myWhatsAppNumber}?text=${encodeURIComponent(orderMessage)}`;
+
+            document.getElementById('order-item-name').innerText = name + (price !== 'N/A' && price ? " - " + price : "");
+            document.getElementById('orderModal').style.display = 'flex';
+        }
+
+        /* closeModal()
+           Hides the order modal overlay */
+        function closeModal() { document.getElementById('orderModal').style.display = 'none'; }
+    </script>
+</body>
+</html>
